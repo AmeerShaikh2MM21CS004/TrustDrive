@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Drive  - View Person Details</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+    <!-- Web3.js -->
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <script src="web3connection.js"></script> 
+
+    <link rel="stylesheet" href="viewPersonDetails.css" />
+
+    <script>
+        $(document).ready(function() {
+            var hashcode = Cookies.get('hashcodecp');
+            var username = Cookies.get('usernamecp');  
+
+            $("#uname").text(username); 
+            $("#hcode").text(hashcode);
+
+            // Fetch balance from blockchain
+            web3.eth.getBalance(hashcode).then(function(rvalue) {
+                rvalue = web3.utils.fromWei(rvalue, "Ether");
+                $("#balance").text(rvalue + " ETH"); 
+            });
+
+            // Retrieve Query String Parameters
+            var param = new URLSearchParams(window.location.search);
+            var phc = param.get("personhashcode");
+
+            // Fetch user details from blockchain
+            myContract.methods.getUserDetails(phc).call().then(function(returnarray) {
+                var obj = returnarray;       
+                var output = `<div class="details-card">
+                    <h4>Person Details</h4>
+                    <ul>
+                        <li><strong>Name:</strong> ${obj[0]}</li>
+                        <li><strong>Contact No:</strong> ${obj[1]}</li>
+                        <li><strong>Email:</strong> <a href="mailto:${obj[2]}" target="_blank">${obj[2]}</a></li>
+                    </ul>
+                </div>`;
+                $("#persondetails").html(output);
+            }).catch(function(error) {
+                console.error("Error fetching person details:", error);
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Trust Drive </h1>
+        <hr />
+        <div class="user-info">
+            <div><strong>User:</strong> <span id="uname"></span></div>
+            <div><strong>Account ID:</strong> <span id="hcode"></span></div>
+            <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+        </div>
+        <hr />
+        <a class="btn" href="userdashboardpanelchoice.html">Dashboard</a>
+        <div id="persondetails"></div>
+    </div>
+</body>
+</html>

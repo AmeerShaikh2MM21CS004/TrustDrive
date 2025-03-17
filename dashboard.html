@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Drive - Driver Panel</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    
+    <!-- Web3.js -->
+    <script src="node_modules/web3.js-browser/build/web3.js"></script>
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <script src="web3connection.js"></script> 
+    
+    <link rel="stylesheet" href="dashboard.css" />
+
+    <script>
+        $(document).ready(function() {
+            var hashcode = Cookies.get('hashcodecp');
+            var username = Cookies.get('usernamecp');  
+
+            $("#uname").text(username); 
+            $("#hcode").text(hashcode);
+
+            // Fetch balance from blockchain
+            web3.eth.getBalance(hashcode).then(function(rvalue) {
+                rvalue = web3.utils.fromWei(rvalue, "Ether");
+                $("#balance").text(rvalue + " ETH"); 
+            });
+
+            // Get number of rides published by the driver
+            myContract.methods.getMyRides(hashcode).call().then(function(returnarray) {
+                $("#cntview").text(returnarray[1]);
+            }).catch(function(error) {
+                console.error("Error fetching ride details:", error);
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Trust Drive - Driver Panel</h1>
+        <hr />
+        <div class="user-info">
+            <div><strong>Welcome:</strong> <span id="uname"></span></div>
+            <div><strong>Account ID:</strong> <span id="hcode"></span></div>
+            <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+        </div>
+        <hr />
+        <div class="menu">
+            <a class="btn" href="userdashboardpanelchoice.html">Switch to Account</a>
+            <a class="btn btn-logout" href="index.html">Logout</a>
+        </div>
+        <h3>Menu Options</h3>
+        <ol>
+            <li><a href="publishride.html">Publish Your Ride</a></li>
+            <li><a href="viewRideDetails.html">View Your Rides</a> (<span id="cntview">0</span>)</li>
+            <li><a href="ViewDriverBookedRides.html">Check Ride Bookings</a></li>
+        </ol>
+    </div>
+</body>
+</html>

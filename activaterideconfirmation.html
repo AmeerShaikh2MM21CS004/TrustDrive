@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Drive - Ride Activated</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    
+    <!-- Web3.js -->
+    <script src="node_modules/web3.js-browser/build/web3.js"></script>
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <script src="web3connection.js"></script> 
+    
+    <link rel="stylesheet" href="activaterideconfirmation.css" />
+
+    <script>
+        $(document).ready(function() {
+            var hashcode = Cookies.get('hashcodecp');
+            var username = Cookies.get('usernamecp');  
+
+            $("#uname").text(username); 
+            $("#hcode").text(hashcode);
+
+            // Fetch balance from blockchain
+            web3.eth.getBalance(hashcode).then(function(rvalue) {
+                rvalue = web3.utils.fromWei(rvalue, "Ether");
+                $("#balance").text(rvalue + " ETH"); 
+            });
+
+            // Activate the ride
+            var param = new URLSearchParams(window.location.search);
+            var rideno = param.get("rideno");
+
+            if (rideno) {
+                myContract.methods.activateRide(rideno).send({ from: hashcode, gas: '3000000' });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Trust Drive</h1>
+        <hr />
+        <div class="user-info">
+            <div><strong>User:</strong> <span id="uname"></span></div>
+            <div><strong>Account ID:</strong> <span id="hcode"></span></div>
+            <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+        </div>
+        <hr />
+        <h4>Your Ride has been Activated</h4>
+        <a href="dashboard.html" class="btn">Go to Dashboard</a>
+    </div>
+</body>
+</html>
