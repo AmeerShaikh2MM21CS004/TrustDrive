@@ -1,25 +1,13 @@
 {
-  "dependencies": {
-    "web3": "^4.16.0",
-    "web3.js-browser": "^0.2.0"
-  },
-  "name": "trustdrive",
+  "name": "public",
   "version": "1.0.0",
   "description": "",
   "main": "balanceview.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AmeerShaikh2MM21CS004/TrustDrive.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/AmeerShaikh2MM21CS004/TrustDrive/issues"
-  },
-  "homepage": "https://github.com/AmeerShaikh2MM21CS004/TrustDrive#readme"
+  "type": "commonjs"
 }

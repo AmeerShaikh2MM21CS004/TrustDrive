@@ -84,18 +84,19 @@ hr {
 
 /* Buttons */
 .btn {
-    background-color: #ffcc00;
-    color: #121212;
-    border: none;
-    padding: 10px 15px;
-    margin-top: 10px;
-    border-radius: 5px;
-    cursor: pointer;
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
     font-size: 16px;
+    color: #121212;
+    background-color: #ffcc00;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
     transition: 0.3s;
-    display: inline-block;
-    text-align: center;
     width: 100%;
+    text-align: center;
+    font-weight: bold;
 }
 
 .btn:hover {
@@ -103,21 +104,21 @@ hr {
 }
 
 .secondary {
-    display: inline-block;
-    margin-top: 10px;
+    display: block;
+    margin-top: 20px;
     text-decoration: none;
-    font-size: 14px;
-    color: #ffcc00;
-    border-bottom: 1px solid #ffcc00;
-    transition: 0.3s;
-    padding: 10px;
+    font-size: 16px;
+    color: #121212;
+    background-color: #ffcc00;
+    border: none;
+    padding: 12px;
     border-radius: 5px;
-    text-align: center;
+    transition: 0.3s;
     width: 100%;
-    background-color: transparent;
+    text-align: center;
+    font-weight: bold;
 }
 
 .secondary:hover {
-    color: #e6b800;
-    border-bottom: 1px solid #e6b800;
+    background-color: #e6b800;
 }

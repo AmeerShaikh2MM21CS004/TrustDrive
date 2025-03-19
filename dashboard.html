@@ -37,6 +37,28 @@
         $("#balance").text("Error fetching balance");
     }
 });
+async function getRideCount(driverAddress) {
+        try {
+            if (!web3.utils.isAddress(driverAddress)) {
+                console.error("Invalid Ethereum address:", driverAddress);
+                return 0;
+            }
+
+            // Ensure myContract is available
+            if (typeof myContract === "undefined") {
+                console.error("Smart contract instance (myContract) is not defined.");
+                return 0;
+            }
+
+            let returnarray = await myContract.methods.getMyRides(driverAddress).call();
+            let totalRides = parseInt(returnarray[1]); // Assuming second value in return array is ride count
+
+            return totalRides;
+        } catch (error) {
+            console.error("Error fetching ride count:", error);
+            return 0;
+        }
+    }
 
     </script>
 </head>
@@ -58,7 +80,7 @@
         <h3>Menu Options</h3>
         <ol>
             <li><a href="publishride.html">Publish Your Ride</a></li>
-            <li><a href="viewRideDetails.html">View Your Rides</a> (<span id="cntview">0</span>)</li>
+            <li><a href="viewRideDetails.html">View Your Rides</a></li>
             <li><a href="ViewDriverBookedRides.html">Check Ride Bookings</a></li>
         </ol>
     </div>
