@@ -1,91 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trust Drive - View Ride Details</title>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Trust Drive - View Ride Details</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 
-    <!-- Web3.js -->
-    <script src="node_modules/web3/dist/web3.min.js"></script>
-    <script src="web3connection.js"></script> 
+        <!-- Web3.js -->
+        <script src="node_modules/web3/dist/web3.min.js"></script>
+        <script src="web3connection.js"></script> 
 
-    <link rel="stylesheet" href="viewRideDetails.css" />
+        <link rel="stylesheet" href="viewRideDetails.css" />
 
-    <script>
-        $(document).ready(function() {
-            var hashcode = Cookies.get('hashcodecp');
-            var username = Cookies.get('usernamecp');  
+        <script>
+            $(document).ready(async function() {
+        console.log("Script loaded");
 
-            $("#uname").text(username); 
-            $("#hcode").text(hashcode);
+        var hashcode = Cookies.get('hashcodecp');
+        var username = Cookies.get('usernamecp');  
 
-            // Fetch balance from blockchain
-            web3.eth.getBalance(hashcode).then(function(rvalue) {
-                rvalue = web3.utils.fromWei(rvalue, "Ether");
-                $("#balance").text(rvalue + " ETH"); 
-            });
+        console.log("Username:", username);
+        console.log("Hashcode:", hashcode);
 
-            // Fetch user ride details
-            myContract.methods.getMyRides(hashcode).call().then(function(returnarray) {
-                var totalrides = parseInt(returnarray[1]);
-                $("#ridecount").text(totalrides);
-                var output = "";
+        $("#uname").text(username); 
+        $("#hcode").text(hashcode);
 
-                if (totalrides === 0) {
-                    $("#ridedetails").html("<p style='color: red;'>No rides found.</p>");
-                    return;
+        if (!hashcode || !username) {
+            console.error("Cookies are missing or not set properly.");
+            return;
+        }
+
+        // Ensure web3 is loaded
+        if (typeof web3 === 'undefined') {
+            console.error("Web3.js is not loaded.");
+            $("#balance").text("Error: Web3 not loaded");
+            return;
+        }
+
+        console.log("Web3 instance:", web3);
+
+        // Fetch balance from blockchain
+        if (web3.utils.isAddress(hashcode)) {
+            let balanceWei = await web3.eth.getBalance(hashcode);
+            let balanceEth = web3.utils.fromWei(balanceWei, "ether");
+            console.log("Account Balance:", balanceEth);
+            $("#balance").text(balanceEth + " ETH");
+        } else {
+            console.error("Invalid Ethereum address:", hashcode);
+            $("#balance").text("Error: Invalid Address");
+            return;
+        }
+
+        // Ensure myContract is defined
+        if (typeof myContract === "undefined") {
+            console.error("Smart contract instance (myContract) is not defined.");
+            return;
+        }
+
+        console.log("Smart contract instance:", myContract);
+
+        // Fetch user ride details
+        myContract.methods.getMyRides(hashcode).call()
+        .then(function(returnarray) {
+            console.log("Ride Data:", returnarray);
+            
+            var totalrides = parseInt(returnarray[1]);
+            $("#ridecount").text(totalrides);
+            var output = "";
+
+            if (totalrides === 0) {
+                $("#ridedetails").html("<p style='color: red;'>No rides found.</p>");
+                return;
+            }
+
+            for (var i = 0; i < totalrides; i++) {
+                var obj = returnarray[0][i];
+                console.log("Ride Object:", obj);
+
+                var status = obj[12] ? "<span style='color: green;'>Active</span>" : "<span style='color: red;'>Cancelled</span>";
+
+                output += `<div class="ride-card">
+                    <h4>Ride ${i + 1}</h4>
+                    <ul>
+                        <li><strong>Heading From:</strong> ${obj[2]}</li>
+                        <li><strong>Heading To:</strong> ${obj[3]}</li>
+                        <li><strong>Ride Date:</strong> ${obj[4]}</li>
+                        <li><strong>Ride Time:</strong> ${obj[5]}</li>
+                        <li><strong>Ride Charges:</strong> ${obj[6]} ETH</li>
+                        <li><strong>Number of Persons:</strong> ${obj[7]}</li>
+                        <li><strong>Vehicle Type:</strong> ${obj[9]}</li>
+                        <li><strong>Ride Status:</strong> ${status}</li>
+                    </ul>`;
+
+                if (obj[12]) {
+                    output += `<a class="btn btn_cancel" href="cancelride.html?rideno=${obj[0]}">Cancel Ride</a>`;
+                } else {
+                    output += `<a class="btn btn_activate" href="activateride.html?rideno=${obj[0]}">Activate Ride</a>`;
                 }
 
-                for (var i = 0; i < totalrides; i++) {
-                    var obj = returnarray[0][i];
-                    var status = obj[12] ? "<span style='color: green;'>Active</span>" : "<span style='color: red;'>Cancelled</span>";
-                    
-                    output += `<div class="ride-card">
-                        <h4>Ride ${i + 1}</h4>
-                        <ul>
-                            <li><strong>Heading From:</strong> ${obj[2]}</li>
-                            <li><strong>Heading To:</strong> ${obj[3]}</li>
-                            <li><strong>Ride Date:</strong> ${obj[4]}</li>
-                            <li><strong>Ride Time:</strong> ${obj[5]}</li>
-                            <li><strong>Ride Charges:</strong> ${obj[6]} ETH</li>
-                            <li><strong>Number of Persons:</strong> ${obj[7]}</li>
-                            <li><strong>Vehicle Type:</strong> ${obj[9]}</li>
-                            <li><strong>Ride Status:</strong> ${status}</li>
-                        </ul>`;
+                output += `<a class="btn" href="updateridestatus.html?rideno=${obj[0]}">Update Ride Status</a></div>`;
+            }
 
-                    if (obj[12]) {
-                        output += `<a class="btn btn_cancel" href="cancelride.html?rideno=${obj[0]}">Cancel Ride</a>`;
-                    } else {
-                        output += `<a class="btn btn_activate" href="activateride.html?rideno=${obj[0]}">Activate Ride</a>`;
-                    }
-
-                    output += `<a class="btn" href="updateridestatus.html?rideno=${obj[0]}">Update Ride Status</a></div>`;
-                }
-
-                $("#ridedetails").html(output);
-            }).catch(function(error) {
-                console.error("Error fetching ride details:", error);
-            });
+            $("#ridedetails").html(output);
+        })
+        .catch(function(error) {
+            console.error("Error fetching ride details:", error);
+            $("#ridedetails").html("<p style='color: red;'>Error fetching ride details.</p>");
         });
-    </script>
-</head>
+    });
 
-<body>
-    <div class="container">
-        <h1>Trust Drive </h1>
-        <hr />
-        <div class="user-info">
-            <div><strong>User:</strong> <span id="uname"></span></div>
-            <div><strong>Account ID:</strong> <span id="hcode"></span></div>
-            <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+        </script>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Trust Drive </h1>
+            <hr />
+            <div class="user-info">
+                <div><strong>User:</strong> <span id="uname"></span></div>
+                <div><strong>Account ID:</strong> <span id="hcode"></span></div>
+                <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+            </div>
+            <hr />
+            <a class="btn" href="dashboard.html">Dashboard</a>
+            <h4>Ride Details - <span id="ridecount"></span></h4>
+            <div id="ridedetails"></div>
         </div>
-        <hr />
-        <a class="btn" href="dashboard.html">Dashboard</a>
-        <h4>Ride Details - <span id="ridecount"></span></h4>
-        <div id="ridedetails"></div>
-    </div>
-</body>
-</html>
+    </body>
+    </html>

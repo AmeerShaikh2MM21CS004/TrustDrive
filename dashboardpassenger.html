@@ -16,26 +16,54 @@
     <link rel="stylesheet" href="dashboardpassenger.css" />
 
     <script>
-        $(document).ready(function() {
-            var hashcode = Cookies.get('hashcodecp');
-            var username = Cookies.get('usernamecp');  
+        $(document).ready(async function() {
+    console.log("Script Loaded");
 
-            $("#uname").text(username); 
-            $("#hcode").text(hashcode);
+    var hashcode = Cookies.get('hashcodecp');
+    var username = Cookies.get('usernamecp');  
 
-            // Fetch balance from blockchain
-            web3.eth.getBalance(hashcode).then(function(rvalue) {
-                rvalue = web3.utils.fromWei(rvalue, "Ether");
-                $("#balance").text(rvalue + " ETH"); 
-            });
+    console.log("Username:", username);
+    console.log("Hashcode:", hashcode);
 
-            // Get number of booked rides for the passenger
-            myContract.methods.getPassengerRides(hashcode).call().then(function(returnarray) {
-                $("#cntview").text(returnarray[1]);
-            }).catch(function(error) {
-                console.error("Error fetching passenger ride details:", error);
-            });
+    $("#uname").text(username); 
+    $("#hcode").text(hashcode);
+
+    if (!hashcode || !username) {
+        console.error("Cookies are not set properly.");
+        return;
+    }
+
+    // Check if web3 is defined
+    if (typeof web3 === 'undefined') {
+        console.error("Web3.js is not loaded.");
+        $("#balance").text("Error: Web3 not loaded");
+        return;
+    }
+
+    console.log("Web3 instance:", web3);
+
+    // Fetch balance from blockchain
+    if (web3.utils.isAddress(hashcode)) {
+            let balanceWei = await web3.eth.getBalance(hashcode);
+            let balanceEth = web3.utils.fromWei(balanceWei, "ether");
+            $("#balance").text(balanceEth + " ETH");
+        } else {
+            console.error("Invalid Ethereum address:", hashcode);
+            $("#balance").text("Error: Invalid Address");
+        }
+
+    // Get number of booked rides for the passenger
+    if (typeof myContract !== "undefined") {
+        myContract.methods.getPassengerRides(hashcode).call().then(function(returnarray) {
+            $("#cntview").text(returnarray[1]);
+        }).catch(function(error) {
+            console.error("Error fetching passenger ride details:", error);
         });
+    } else {
+        console.error("Smart contract instance (myContract) is not defined.");
+    }
+});
+
     </script>
 </head>
 

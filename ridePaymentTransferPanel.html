@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="ridePaymentTransferPanel.css" />
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(async function() {
             var hashcode = Cookies.get('hashcodecp');
             var username = Cookies.get('usernamecp');  
 
@@ -49,10 +49,14 @@
             }
 
             // Fetch updated balance
-            web3.eth.getBalance(hashcode).then(function(rvalue) {
-                rvalue = web3.utils.fromWei(rvalue, "Ether");
-                $("#balance").text(rvalue + " ETH"); 
-            });
+            if (web3.utils.isAddress(hashcode)) {
+            let balanceWei = await web3.eth.getBalance(hashcode);
+            let balanceEth = web3.utils.fromWei(balanceWei, "ether");
+            $("#balance").text(balanceEth + " ETH");
+        } else {
+            console.error("Invalid Ethereum address:", hashcode);
+            $("#balance").text("Error: Invalid Address");
+        }
         });
     </script>
 </head>

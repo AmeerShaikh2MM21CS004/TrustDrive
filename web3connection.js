@@ -1,3 +1,4 @@
+// Web3=require("web3");
 web3=new Web3( new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 web3.eth.defaultAccount=web3.eth.accounts[0];
 
@@ -844,5 +845,6 @@ var myContract=new web3.eth.Contract([
 		"stateMutability": "view",
 		"type": "function"
 	}
-],"0x9e896FFeB92afd155c3Fe03E5A01B44FdAD3D3ea");
+],"0xB9baE0fE189aEB13BcA41B37faAb9A77d263B862");
+
 
