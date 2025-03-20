@@ -1,1 +1,7 @@
 node_modules
+**/__pycache__/
+.vscode
+.git
+.gitignore
+deployment_config.json
+build/
