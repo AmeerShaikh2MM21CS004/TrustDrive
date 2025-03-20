@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Drive - Publish Ride</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    
+    <link rel="stylesheet" href="publishride.css" />
+    
+    <!-- Web3.js -->
+    <script src="node_modules/web3.js-browser/build/web3.js"></script>
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <script src="web3connection.js"></script> 
+
+    <script>
+        $(document).ready(async function() {
+            var hashcode = Cookies.get('hashcodecp');
+            var username = Cookies.get('usernamecp');  
+
+            $("#uname").text(username); 
+            $("#hcode").text(hashcode);
+
+            // Fetch balance from blockchain
+            if (web3.utils.isAddress(hashcode)) {
+            let balanceWei = await web3.eth.getBalance(hashcode);
+            let balanceEth = web3.utils.fromWei(balanceWei, "ether");
+            $("#balance").text(balanceEth + " ETH");
+        } else {
+            console.error("Invalid Ethereum address:", hashcode);
+            $("#balance").text("Error: Invalid Address");
+        }
+
+            // Publish Ride
+            $("#btn_submit").click(function() {
+                var headingfrom = $("#hfrom").val().trim();
+                var headingto = $("#hto").val().trim();
+                var ridedate = $("#rdate").val();
+                var ridetime = $("#rtime").val();
+                var nop = $("#rnop").val();
+                var rideamount = $("#rcharges").val();
+                var vehicletype = $("#vtype").val();
+
+                if (!headingfrom || !headingto || !ridedate || !ridetime || !nop || !rideamount) {
+                    alert("All fields are required.");
+                    return;
+                }
+
+                if (nop <= 0) {
+                    alert("Number of passengers must be greater than 0.");
+                    return;
+                }
+
+                if (isNaN(rideamount) || rideamount <= 0) {
+                    alert("Enter a valid ride charge.");
+                    return;
+                }
+
+                myContract.methods.AddRide(hashcode, headingfrom, headingto, ridedate, ridetime, rideamount, nop, vehicletype).send({
+                    from: hashcode, 
+                    gas: '3000000'
+                }).then(() => {
+                    $("#msg").html("<br /><span style='color: green;'>Your Ride has been activated!</span>");
+                }).catch(error => {
+                    alert("Failed to publish ride. Please try again.");
+                    console.error(error);
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Trust Drive - Publish Ride</h1>
+        <hr />
+        <!-- <div class="user-info">
+            <div><strong>User Name:</strong> <span id="uname"></span></div>
+            <div><strong>Account ID:</strong> <span id="hcode"></span></div>
+            <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+        </div>
+        <hr /> -->
+        <a class="btn" href="dashboard.html">Dashboard</a>
+        <h3>Publish Your Ride <span id="msg"></span></h3>
+
+        <form>
+            <div>
+                <span class="title">Heading From</span>
+                <input type="text" id="hfrom" placeholder="Enter starting location" required />
+            </div>
+            <div>
+                <span class="title">Heading To</span>
+                <input type="text" id="hto" placeholder="Enter destination" required />
+            </div>
+            <div>
+                <span class="title">Ride Date</span>
+                <input type="date" id="rdate" required />
+            </div>
+            <div>
+                <span class="title">Ride Time</span>
+                <input type="time" id="rtime" required />
+            </div>
+            <div>
+                <span class="title">Number of Passengers</span>
+                <input type="number" id="rnop" min="1" required />
+            </div>
+            <div>
+                <span class="title">Ride Charges (ETH)</span>
+                <input type="text" id="rcharges" placeholder="Enter ride price" required />
+            </div>
+            <div>
+                <span class="title">Vehicle Type</span>
+                <select id="vtype">
+                    <option value="2 Wheeler">2 Wheeler</option>
+                    <option value="4 Wheeler">4 Wheeler</option>
+                </select>
+            </div>
+            <div>
+                <input type="button" id="btn_submit" value="Publish My Ride" />
+            </div>
+        </form>
+    </div>
+</body>
+</html>

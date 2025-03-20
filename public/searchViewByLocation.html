@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Drive  - Search Ride</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    
+    <!-- Web3.js -->
+    <script src="node_modules/web3.js-browser/build/web3.js"></script>
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <script src="web3connection.js"></script> 
+    
+    <link rel="stylesheet" href="searchViewByLocation.css" />
+
+    <script>
+        $(document).ready(async function() {
+            var hashcode = Cookies.get('hashcodecp');
+            var username = Cookies.get('usernamecp');  
+
+            $("#uname").text(username); 
+            $("#hcode").text(hashcode);
+
+            // Fetch balance from blockchain
+            if (web3.utils.isAddress(hashcode)) {
+            let balanceWei = await web3.eth.getBalance(hashcode);
+            let balanceEth = web3.utils.fromWei(balanceWei, "ether");
+            $("#balance").text(balanceEth + " ETH");
+        } else {
+            console.error("Invalid Ethereum address:", hashcode);
+            $("#balance").text("Error: Invalid Address");
+        }
+
+            // Search for rides
+            $("#btn_search").click(function() {
+                var arghfrom = $("#hfrom").val().trim();
+                var arghto = $("#hto").val().trim();
+
+                if (!arghfrom && !arghto) {
+                    alert("Please enter at least one location.");
+                    return;
+                }
+
+                myContract.methods.searchByLocation(hashcode, arghfrom, arghto).call().then(function(returnarray) {
+                    var totalrides = returnarray[1];
+                    $("#ridedetails").html(""); 
+
+                    if (totalrides == 0) {
+                        $("#ridecount").html("<span style='color: red;'>Sorry, no rides found.</span>");
+                    } else {
+                        $("#ridecount").html("<span style='color: green;'>Total Rides Found: " + totalrides + "</span>");
+                    }
+
+                    var output = "";
+                    for (var i = 0; i < totalrides; i++) {
+                        var obj = returnarray[0][i]; 
+                        output += `<div class="ride-card">
+                            <h4>Ride ${i + 1}</h4>
+                            <ul>
+                                <li><strong>Heading From:</strong> ${obj[2]}</li>
+                                <li><strong>Heading To:</strong> ${obj[3]}</li>
+                                <li><strong>Ride Date:</strong> ${obj[4]}</li>
+                                <li><strong>Ride Time:</strong> ${obj[5]}</li>
+                                <li><strong>Ride Charges:</strong> ${obj[6]} ETH</li>
+                                <li><strong>Number of Persons:</strong> ${obj[7]}</li>
+                                <li><strong>Vehicle Type:</strong> ${obj[9]}</li>
+                                <li><strong>Ride Status:</strong> ${obj[12] ? "Active" : "Cancelled"}</li>
+                            </ul>
+                            <a class="btn" href="viewPersonDetails.html?rideno=${obj[0]}&personhashcode=${obj[1]}">Person Details</a>
+                            <a class="btn" href="mapRideBooking.html?rideno=${obj[0]}">Book My Ride</a>
+                        </div>`;
+                    }
+                    $("#ridedetails").html(output);
+                }).catch(function(error) {
+                    console.error("Error fetching ride details:", error);
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Trust Drive - Passenger Panel</h1>
+        <hr />
+        <!-- <div class="user-info">
+            <div><strong>User:</strong> <span id="uname"></span></div>
+            <div><strong>Account ID:</strong> <span id="hcode"></span></div>
+            <div><strong>Account Balance:</strong> <span id="balance"></span></div>
+        </div>
+        <hr /> -->
+        <a class="btn" href="dashboardpassenger.html">Dashboard</a>
+        <h4>.</h4>
+
+        <fieldset>
+            <legend>Search By LOCATION</legend>
+            <form>
+                <div>
+                    <span class="title">Heading From</span>
+                    <input type="text" id="hfrom" placeholder="Enter starting location" />
+                </div>
+                <br />OR<br />
+                <div>
+                    <span class="title">Heading To</span>
+                    <input type="text" id="hto" placeholder="Enter destination" />
+                </div>
+                <div>
+                    <input type="button" id="btn_search" value="Search Now" />
+                </div>
+            </form>
+        </fieldset>
+
+        <h4>Ride Details - <span id="ridecount"></span></h4>
+        <div id="ridedetails"></div>
+    </div>
+</body>
+</html>

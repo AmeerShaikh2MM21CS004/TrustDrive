@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Drive - Login</title>
+
+    <!-- External Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="node_modules/web3/dist/web3.min.js"></script>
+    <script src="web3connection.js"></script> 
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="title">🚗 Trust Drive - Login Panel</h1>
+
+        <div class="new-user">
+            <a href="newuser.html" class="btn secondary">New User? Register Here</a>
+        </div>
+
+        <div class="panel">
+            <fieldset>
+                <legend>👨‍✈️ Driver Login</legend>
+                <form id="form1">
+                    <label for="hashaddressdp">User Address</label>
+                    <input type="text" id="hashaddressdp" placeholder="Enter your HashCode address" required />
+                    <button type="button" id="btn_action" class="btn">Log in as Driver</button>
+                </form>
+            </fieldset>
+
+            <fieldset>
+                <legend>🧍 Passenger Login</legend>
+                <form id="form2">
+                    <label for="hashaddresspp">User Address</label>
+                    <input type="text" id="hashaddresspp" placeholder="Enter your HashCode address" required />
+                    <button type="button" id="btn_action2" class="btn">Log in as Passenger</button>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            function loginUser(inputId, dashboardPage) {
+                var hashcode = $(inputId).val();
+                myContract.methods.loginPanel(hashcode).call().then(function (returndata) {
+                    if (returndata[1] == 1) {
+                        var uname = returndata[0];
+                        Cookies.set('hashcodecp', hashcode, { expires: 14 });
+                        Cookies.set('usernamecp', uname, { expires: 14 });
+                        window.location.replace(dashboardPage);
+                    } else {
+                        alert("User Account Not Found");
+                    }
+                });
+            }
+
+            $("#btn_action").click(function () {
+                loginUser("#hashaddressdp", "dashboard.html");
+            });
+
+            $("#btn_action2").click(function () {
+                loginUser("#hashaddresspp", "dashboardpassenger.html");
+            });
+        });
+    </script>
+
+</body>
+</html>
