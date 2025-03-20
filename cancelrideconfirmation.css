@@ -2,9 +2,10 @@
 
 /* Global Styles */
 body {
-    background-color: #121212;
+    background: url('map1.jfif') no-repeat center center fixed;
+    background-size: cover;
     color: #e0e0e0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -108,5 +109,5 @@ hr {
 }
 
 .btn-danger:hover {
-    background-color: darkred;
+    background-color: darkred;  
 }

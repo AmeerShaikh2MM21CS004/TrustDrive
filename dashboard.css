@@ -2,9 +2,10 @@
 
 /* Global Styles */
 body {
-    background-color: #121212;
+    background: url('8.jpg') no-repeat center center fixed;
+    background-size: 70rem;
     color: #e0e0e0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -87,7 +88,7 @@ hr {
 /* Logout Button */
 .btn-logout {
     background-color: red;
-    color: white;
+    color: #121212;
 }
 
 .btn-logout:hover {

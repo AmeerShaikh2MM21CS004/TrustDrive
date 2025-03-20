@@ -18,47 +18,60 @@
         $(document).ready(async function() {
             var hashcode = Cookies.get('hashcodecp');
             var username = Cookies.get('usernamecp');  
-
+    
             $("#uname").text(username); 
             $("#hcode").text(hashcode);
-
+    
             var param = new URLSearchParams(window.location.search);
             var paymentToAddress = param.get("pto");
             var amount = param.get("amount");
             var rbid = param.get("rbid");
-
+    
             if (paymentToAddress && amount) {
-                web3.eth.sendTransaction({
-                    from: hashcode,
-                    to: paymentToAddress,
-                    value: web3.utils.toWei(amount.toString(), "Ether")
-                }).then(function(receipt) {
-                    $("#status").text("Transaction successful!");
-                }).catch(function(error) {
-                    $("#status").text("Transaction failed! Please try again.");
-                    console.error(error);
-                });
+                let gasPrice = await web3.eth.getGasPrice();
+console.log("Current Gas Price:", web3.utils.fromWei(gasPrice, "gwei"), "Gwei");
 
+try {
+    let receipt = await web3.eth.sendTransaction({
+        from: hashcode,
+        to: paymentToAddress,   
+        value: web3.utils.toWei(amount.toString(), "ether"),
+        gas: 300000,  // Increase gas limit
+        gasPrice: gasPrice // Use suggested gas price
+    });
+    console.log("Transaction Receipt:", receipt);
+    $("#status").text("Transaction successful!");
+} catch (error) {
+    $("#status").text("Transaction failed! Please check logs.");
+    console.error("Transaction Error:", error);
+}
+
+    
                 $("#amtval").text(amount);
                 $("#dpaddress").text(paymentToAddress);
-
+    
                 // Update payment status on blockchain
-                myContract.methods.ridepaymentupdates(rbid).send({ from: hashcode, gas: '3000000' });
+                if (typeof myContract !== "undefined") {
+                    myContract.methods.ridepaymentupdates(rbid).send({ from: hashcode, gas: '3000000' });
+                } else {
+                    console.error("myContract is not defined.");
+                }
             } else {
                 $("#status").text("Invalid transaction details.");
             }
-
+    
             // Fetch updated balance
             if (web3.utils.isAddress(hashcode)) {
-            let balanceWei = await web3.eth.getBalance(hashcode);
-            let balanceEth = web3.utils.fromWei(balanceWei, "ether");
-            $("#balance").text(balanceEth + " ETH");
-        } else {
-            console.error("Invalid Ethereum address:", hashcode);
-            $("#balance").text("Error: Invalid Address");
-        }
+                let balanceWei = await web3.eth.getBalance(hashcode);
+                let balanceEth = web3.utils.fromWei(balanceWei, "ether");
+                $("#balance").text(balanceEth + " ETH");
+            } else {
+                console.error("Invalid Ethereum address:", hashcode);
+                $("#balance").text("Error: Invalid Address");
+            }
         });
     </script>
+    
 </head>
 
 <body>

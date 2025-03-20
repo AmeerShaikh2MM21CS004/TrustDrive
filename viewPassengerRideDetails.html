@@ -33,39 +33,84 @@
         }
 
             // Fetch all rides available for the passenger
-            myContract.methods.getAvailableRides().call().then(function(returnarray) {
-                var totalrides = returnarray.length;
-                $("#ridecount").text(totalrides);
-                var output = "";
+            myContract.methods.getPassengerRides(hashcode).call().then(
+						function(returnarray){
+							var index=0;
+                            $("#ridecount").text(returnarray[1]);
+                            totalrides=parseInt(returnarray[1]);
+                               var rideno=1; 
+                            while(index<totalrides)
+                                {
+                                 var obj=returnarray[0][index];       
+                                 var output= "Ride " + rideno +" <ul>";
+                                 output=output + "<li><span class=title>Heading From</span>:" + obj[2] + "</li>";     
+                                 output=output + "<li><span class=title>Heading To</span>:" + obj[3] + "</li>";
+                                 output=output + "<li><span class=title>Ride Date</span>:" + obj[4] + "</li>";
+                                 output=output + "<li><span class=title>Ride Time</span>:" + obj[5] + "</li>";
+                                 output=output + "<li><span class=title>Ride Charges</span>:" + obj[6] + " Eth</li>";
+                                 output=output + "<li><span class=title>Number of Persons</span>:" + obj[7] + "</li>";
+                                 output=output + "<li ><span class='title highlight'>Current Booking Status</span>:" + obj[8] + "</li>";
+                                 output=output + "<li><span class=title>VType</span>:" + obj[9] + "</li>";
 
-                if (totalrides === 0) {
-                    $("#ridedetails").html("<p style='color: red;'>No available rides found.</p>");
-                    return;
-                }
+                                 var status=obj[12];   
+                                  
+                                   if(status==true)     
+                                   {
+                                    output=output + "<li><span class=title>Ride Status</span>:Active</li>";
+                                
+                                   }
+                                   else
+                                   {
+                                    output=output + "<li><span class=title>Ride Status</span>: Cancelled</li>";
+                                   }
+                                 output=output + "</ul>";
 
-                for (var i = 0; i < totalrides; i++) {
-                    var obj = returnarray[i];
-                    output += `<div class="ride-card">
-                        <h4>Ride ${i + 1}</h4>
-                        <ul>
-                            <li><strong>Heading From:</strong> ${obj[1]}</li>
-                            <li><strong>Heading To:</strong> ${obj[2]}</li>
-                            <li><strong>Ride Date:</strong> ${obj[3]}</li>
-                            <li><strong>Ride Time:</strong> ${obj[4]}</li>
-                            <li><strong>Ride Charges:</strong> ${obj[5]} ETH</li>
-                            <li><strong>Available Seats:</strong> ${obj[6]}</li>
-                            <li><strong>Vehicle Type:</strong> ${obj[7]}</li>
-                            <li><strong>Ride Status:</strong> ${obj[8] ? "<span style='color: green;'>Active</span>" : "<span style='color: red;'>Cancelled</span>"}</li>
-                        </ul>
-                        <a class="btn" href="mapRideBooking.html?rideno=${obj[0]}">Book Now</a>
-                    </div>`;
-                }
 
-                $("#ridedetails").html(output);
-            }).catch(function(error) {
-                console.error("Error fetching passenger ride details:", error);
-            });
-        });
+                                 /*dname= returnarray002[0];
+                                 dcontact= returnarray002[1];
+                                 demail= returnarray002[2];*/
+
+                                //getUserDetails           
+                                var uhc=obj[1];
+
+                                //driving person details  
+                                //nested Calling
+                               /* myContract.methods.getUserDetails(uhc).call().then(
+						                                        function(returnarray002){
+                                                                         
+                                                                });*/
+
+
+                                /*output=output + "Driving Person Details";  
+                                output=output + "<ul>";
+                                output=output + "<li><span class=title>Name</span>:" + dname + "</li>";     
+                                output=output + "<li><span class=title>Contact No</span>:" + dcontact + "</li>";
+                                output=output + "<li><span class=title>Email</span>:" + demail + "</li>";
+                                    
+                                output=output + "</ul>";*/
+                                 //action
+                                 
+                                 output=output + "<a class=btn href='viewPersonDetails.html?rideno=" +obj[0] + "&personhashcode=" + uhc +"'>Person Details</a>";
+                                
+                                if(obj[10]==false)
+                                {                                
+                                 output=output + "<a class=btn href='mapRideBooking.html?rideno=" +obj[0] + "'>Book My Ride</a>";
+                                } 
+                                else
+                                {
+                                  output=output + "<a class=btn href='#'>Booking Closed</a>";
+                              
+                                }
+                                 output=output + "<hr />";
+                                 $("#ridedetails").append(output);       
+                                 index++;
+                                 rideno++;
+                                }
+
+
+    						}
+							);
+    });
     </script>
 </head>
 
