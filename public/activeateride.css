@@ -2,7 +2,7 @@
 
 /* Global Styles */
 body {
-    background: url('../assets/map1.jfif');
+    background: url('assets/map1.jfif');
     background-size: cover;
     color: #e0e0e0;
     font-family: 'Poppins', sans-serif;

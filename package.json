@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "express": "^4.21.2",
-    "firebase": "^11.4.0"
+    "firebase": "^11.4.0",
+    "web3": "^4.16.0"
   }
 }

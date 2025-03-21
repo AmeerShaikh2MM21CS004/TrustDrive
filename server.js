@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 
 // Serve static files from the "public" folder
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 // API endpoint (Example: Fetch data)
 app.get('/api/data', (req, res) => {

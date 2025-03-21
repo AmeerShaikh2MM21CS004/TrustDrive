@@ -845,5 +845,6 @@ var myContract=new web3.eth.Contract([
 		"stateMutability": "view",
 		"type": "function"
 	}
-],"0xAf7D6582636c17a8d69AAc01B5ece94969Cc6883");
+],"0x5Cc2458dE558cd4B5dacA48Df9853DbE45921AC3");
+   
 
