@@ -1,20 +1,32 @@
 /* Dark Mode Theme for CarPooling Login Page */
 
+:root {
+    --background: rgba(24, 24, 24, 0.7);  /* Transparent dark background */
+    --primary: rgba(30, 30, 30, 0.85); /* Slightly transparent */
+    --accent: #ffcc00;
+    --text-color: #e0e0e0;
+    --button-hover: #e6b800;
+    --input-bg: rgba(50, 50, 50, 0.6);
+    --border-color: #ffcc00;
+}
+
 /* Global Styles */
 body {
-    background: url('assets/2.jpg')no-repeat center center fixed;
+    background: url('assets/2.jpg') no-repeat center center fixed;
     background-size: cover;
-    color: #e0e0e0;
     font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    backdrop-filter: blur(10px); /* Background blur effect */
 }
 
+/* Container */
 .container {
-    background-color: rgba(30, 30, 30, 0.95);
+    background: var(--primary);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.1);
@@ -23,50 +35,49 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    backdrop-filter: blur(5px); /* Slight blur to enhance visibility */
 }
 
 /* Header */
 .title {
-    color: #ffcc00;
+    color: var(--accent);
     font-size: 24px;
     margin-bottom: 20px;
 }
 
-hr {
-    border: 1px solid #444;
-    margin: 20px 0;
-    width: 100%;
-}
-
 /* Panel Styles */
 .panel {
-    background-color: #252525;
+    background: transparent;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     width: 100%;
 }
 
+/* Fieldset */
 fieldset {
-    border: 2px solid #ffcc00;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
     width: 100%;
     box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.1); /* Subtle transparency */
 }
 
 legend {
     font-size: 18px;
-    color: #ffcc00;
+    color: var(--accent);
     font-weight: bold;
+    padding: 0 10px;
 }
 
+/* Form Labels & Inputs */
 label {
     display: block;
     margin: 10px 0 5px;
-    color: #e0e0e0;
+    color: var(--text-color);
     font-weight: bold;
+    text-align: left;
 }
 
 input {
@@ -74,11 +85,17 @@ input {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #444;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--input-bg);
+    color: var(--text-color);
     font-size: 16px;
     outline: none;
     box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+}
+
+input:focus {
+    border-color: var(--accent);
+    background-color: rgba(80, 80, 80, 0.8);
 }
 
 input::placeholder {
@@ -87,7 +104,7 @@ input::placeholder {
 
 /* Buttons */
 .btn {
-    background-color: #ffcc00;
+    background-color: var(--accent);
     color: #121212;
     border: none;
     padding: 12px;
@@ -102,14 +119,15 @@ input::placeholder {
 }
 
 .btn:hover {
-    background-color: #e6b800;
+    background-color: var(--button-hover);
 }
 
+/* Secondary Button */
 .secondary {
     text-decoration: none;
     font-size: 14px;
-    color: #ffcc00;
-    border-bottom: 1px solid #ffcc00;
+    color: var(--accent);
+    border-bottom: 1px solid var(--accent);
     transition: 0.3s;
     padding: 10px;
     border-radius: 5px;
@@ -119,6 +137,6 @@ input::placeholder {
 }
 
 .secondary:hover {
-    color: #e6b800;
-    border-bottom: 1px solid #e6b800;
+    color: var(--button-hover);
+    border-bottom: 1px solid var(--button-hover);
 }

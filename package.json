@@ -4,7 +4,10 @@
   "description": "",
   "main": "balanceview.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scripts": {
+      "ganache": "ganache --wallet.seed myCustomSeed"
+    }
   },
   "keywords": [],
   "author": "",
@@ -13,6 +16,7 @@
   "dependencies": {
     "express": "^4.21.2",
     "firebase": "^11.4.0",
+    "fs": "^0.0.1-security",
     "web3": "^4.16.0"
   }
 }

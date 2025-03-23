@@ -3,72 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trust Drive - Login</title>
-
-    <!-- External Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-    <script src="node_modules/web3/dist/web3.min.js"></script>
-    <script src="web3connection.js"></script> 
-
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css" />
+    <title>Carpool Connect | Share Your Ride</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">🚗 Trust Drive</div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="HowItWorks.html">How It Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <!-- <li><a href="contact.html">Contact</a></li> -->
+                <li><a href="login.html" class="btn">Login</a></li>
+                <li><a href="register.html" class="btn btn-primary">Register</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <div class="container">
-        <h1 class="title">🚗 Trust Drive - Login Panel</h1>
-
-        <div class="new-user">
-            <a href="newuser.html" class="btn secondary">New User? Register Here</a>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="content">
+            <h1>Share Your Ride, Save the Planet</h1>
+            <p>Carpooling reduces traffic, saves fuel, and helps the environment. Join us today!</p>
+            <br>
+            <a href="register.html" class="btn btn-large">Get Started</a>
         </div>
+    </section>
 
-        <div class="panel">
-            <fieldset>
-                <legend>👨‍✈️ Driver Login</legend>
-                <form id="form1">
-                    <label for="hashaddressdp">User Address</label>
-                    <input type="text" id="hashaddressdp" placeholder="Enter your HashCode address" required />
-                    <button type="button" id="btn_action" class="btn">Log in as Driver</button>
-                </form>
-            </fieldset>
+    <!-- About Carpooling -->
+    <section class="about">
+        <h2>Why Choose Carpooling?</h2>
+        <p>Carpooling helps save money, lower carbon emissions, and build a better community.</p>
+    </section>
 
-            <fieldset>
-                <legend>🧍 Passenger Login</legend>
-                <form id="form2">
-                    <label for="hashaddresspp">User Address</label>
-                    <input type="text" id="hashaddresspp" placeholder="Enter your HashCode address" required />
-                    <button type="button" id="btn_action2" class="btn">Log in as Passenger</button>
-                </form>
-            </fieldset>
-        </div>
-    </div>
-
-    <script>
-        $(document).ready(function () {
-            function loginUser(inputId, dashboardPage) {
-                var hashcode = $(inputId).val();
-                myContract.methods.loginPanel(hashcode).call().then(function (returndata) {
-                    if (returndata[1] == 1) {
-                        var uname = returndata[0];
-                        Cookies.set('hashcodecp', hashcode, { expires: 14 });
-                        Cookies.set('usernamecp', uname, { expires: 14 });
-                        window.location.replace(dashboardPage);
-                    } else {
-                        alert("User Account Not Found");
-                    }
-                });
-            }
-
-            $("#btn_action").click(function () {
-                loginUser("#hashaddressdp", "dashboard.html");
-            });
-
-            $("#btn_action2").click(function () {
-                loginUser("#hashaddresspp", "dashboardpassenger.html");
-            });
-        });
-    </script>
-
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Carpool Connect | Trust Drive</p>
+        <ul>
+            <p>Ameer Shaikh</p>
+            <p>Amanulla Shaikh</p>
+            <p>Rahul Ghorpade</p>
+            <p>Amit Teggi</p>
+        </ul>
+    </footer>
 </body>
 </html>

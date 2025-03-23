@@ -2,7 +2,7 @@
 web3=new Web3( new Web3.providers.HttpProvider('http://127.0.0.1:7545'));
 web3.eth.defaultAccount=web3.eth.accounts[0];
 
-var myContract=new web3.eth.Contract([
+let ABI=[
 	{
 		"inputs": [
 			{
@@ -845,6 +845,45 @@ var myContract=new web3.eth.Contract([
 		"stateMutability": "view",
 		"type": "function"
 	}
-],"0x5Cc2458dE558cd4B5dacA48Df9853DbE45921AC3");
-   
+];
 
+// Fetch deployed contract address from the latest transaction
+async function getDeployedContractAddress() {
+    try {
+        const accounts = await web3.eth.getAccounts(); // Get accounts
+        const latestBlock = await web3.eth.getBlock('latest'); // Get latest block
+        const latestTxHash = latestBlock.transactions[latestBlock.transactions.length - 1]; // Get latest transaction hash
+
+        if (!latestTxHash) {
+            throw new Error("No recent transactions found.");
+        }
+
+        const txReceipt = await web3.eth.getTransactionReceipt(latestTxHash); // Get transaction receipt
+        const contractAddress = txReceipt.contractAddress; // Extract contract address
+		return contractAddress.toString();
+
+        // if (!contractAddress) {
+        //     throw new Error("Contract address not found in the latest transaction.");
+        // }
+
+        // return contractAddress.toString(); // Ensure it's returned as a string
+    } catch (error) {
+        console.error("Error fetching deployed contract address:", error);
+        return null;
+    }
+
+};
+
+// Fetch and use contract address
+getDeployedContractAddress().then(ABI,contractAddress => {
+    console.log("Fetched Contract Address:", contractAddress);
+    console.log("Type of Contract Address:", typeof contractAddress);
+
+    console.log("Contract instance created:", myContract);
+}).catch(error => {
+    console.error(error);
+});
+
+
+var myContract = new web3.eth.Contract(ABI, "0x9b14548f2c6f4277b49C9d8B3EeD78735331BAD8");
+console.log("Contract initialized successfully:");
